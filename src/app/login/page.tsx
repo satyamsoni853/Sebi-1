@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Phone, KeyRound, LogIn, Loader2, RefreshCw } from "lucide-react";
+import {
+  ArrowLeft,
+  Phone,
+  KeyRound,
+  LogIn,
+  Loader2,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
@@ -30,7 +38,10 @@ export default function LoginPage() {
   // Countdown timer for resend OTP
   useEffect(() => {
     if (resendCooldown > 0) {
-      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+      const timer = setTimeout(
+        () => setResendCooldown(resendCooldown - 1),
+        1000,
+      );
       return () => clearTimeout(timer);
     }
   }, [resendCooldown]);
@@ -120,200 +131,184 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen grid lg:grid-cols-2 bg-background">
-      {/* Left Column - Branding (Hidden on mobile) */}
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500 rounded-full blur-[100px]" />
-        </div>
-        <div className="relative z-10">
-          <Link
-            href="/"
-            className="inline-flex items-center text-white/80 hover:text-white transition-colors gap-2 font-medium"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-        </div>
-        <div className="relative z-10 text-white space-y-4">
-          <h1 className="text-5xl font-bold leading-tight">
-            Welcome Back,
-            <br />
-            Trader.
-          </h1>
-          <p className="text-xl text-white/60">
-            Access your dashboard, saved strategies, and premium research.
-          </p>
-        </div>
-        <div className="relative z-10 text-xs text-white/40">
-          © 2024 SEBI Research Analyst. All rights reserved.
-        </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Right Column - Form */}
-      <div className="flex items-center justify-center p-8 lg:p-12 relative">
-        <div className="w-full max-w-md space-y-8">
-          <FadeIn>
-            <div className="text-center lg:text-left">
-              <h2 className="text-3xl font-bold text-foreground">
-                {step === "phone" ? "Sign In" : "Verify OTP"}
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
+      <div className="w-full max-w-md relative z-10">
+        <FadeIn>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
+            {/* Header */}
+            <div className="bg-slate-50/50 dark:bg-slate-900/50 p-6 md:p-8 text-center border-b border-slate-100 dark:border-slate-800 backdrop-blur-sm">
+              <Link
+                href="/"
+                className="inline-flex items-center text-sm text-slate-500 hover:text-primary transition-colors gap-1.5 mb-6"
+              >
+                <ArrowLeft className="w-4 h-4" /> Back to Home
+              </Link>
+
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                {step === "phone" ? "Welcome Back" : "Verify OTP"}
+              </h1>
+              <p className="text-slate-500 dark:text-slate-400">
                 {step === "phone" ? (
-                  <>
-                    Enter your phone number to receive an OTP on WhatsApp
-                  </>
+                  "Enter your mobile number to continue"
                 ) : (
-                  <>
-                    We&apos;ve sent a 6-digit OTP to{" "}
-                    <span className="font-semibold text-foreground">+91 {phone}</span>
-                  </>
+                  <span>
+                    We sent a code to{" "}
+                    <span className="font-semibold text-slate-900 dark:text-slate-200">
+                      +91 {phone}
+                    </span>
+                  </span>
                 )}
               </p>
             </div>
-          </FadeIn>
 
-          {/* Error Message */}
-          {error && (
-            <FadeIn>
-              <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
-                {error}
-              </div>
-            </FadeIn>
-          )}
+            <div className="p-6 md:p-8">
+              {/* Error Message */}
+              {error && (
+                <FadeIn>
+                  <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 text-red-600 dark:text-red-400 text-sm flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5" />
+                    {error}
+                  </div>
+                </FadeIn>
+              )}
 
-          {step === "phone" ? (
-            /* Phone Input Step */
-            <FadeIn delay={0.1}>
-              <form className="space-y-6" onSubmit={handleSendOTP}>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="phone"
-                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                      <Phone className="w-5 h-5" />
-                      <span className="text-sm font-medium">+91</span>
+              {step === "phone" ? (
+                /* Phone Input Step */
+                <form className="space-y-6" onSubmit={handleSendOTP}>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-semibold text-slate-700 dark:text-slate-300"
+                    >
+                      Phone Number
+                    </label>
+                    <div className="relative group">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-slate-400 border-r border-slate-200 dark:border-slate-700 pr-2">
+                        <Phone className="w-4 h-4" />
+                        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                          +91
+                        </span>
+                      </div>
+                      <input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={handlePhoneChange}
+                        className="w-full pl-22 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium placeholder:text-slate-400"
+                        placeholder="98765 43210"
+                        required
+                        disabled={isSubmitting}
+                      />
                     </div>
-                    <input
-                      id="phone"
-                      type="tel"
-                      value={phone}
-                      onChange={handlePhoneChange}
-                      className="w-full pl-20 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                      placeholder="9876543210"
-                      required
-                      disabled={isSubmitting}
-                    />
                   </div>
-                  <p className="text-xs text-gray-400">
-                    You&apos;ll receive an OTP on your WhatsApp
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || phone.length < 10}
+                    className="w-full py-3.5 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" /> Sending
+                        Code...
+                      </>
+                    ) : (
+                      <>
+                        Get OTP <LogIn className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-xs text-center text-slate-400 px-4">
+                    By clicking &quot;Get OTP&quot;, you agree to our Terms and
+                    Privacy Policy.
                   </p>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting || phone.length < 10}
-                  className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" /> Sending OTP...
-                    </>
-                  ) : (
-                    <>
-                      <LogIn className="w-5 h-5" /> Send OTP
-                    </>
-                  )}
-                </button>
-              </form>
-            </FadeIn>
-          ) : (
-            /* OTP Verification Step */
-            <FadeIn delay={0.1}>
-              <form className="space-y-6" onSubmit={handleVerifyOTP}>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="otp"
-                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Enter OTP
-                  </label>
-                  <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="otp"
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      value={otp}
-                      onChange={handleOtpChange}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-center text-2xl font-mono tracking-[0.5em]"
-                      placeholder="••••••"
-                      maxLength={6}
-                      required
-                      disabled={isSubmitting}
-                      autoFocus
-                    />
+                </form>
+              ) : (
+                /* OTP Verification Step */
+                <form className="space-y-6" onSubmit={handleVerifyOTP}>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="otp"
+                      className="block text-sm font-semibold text-slate-700 dark:text-slate-300"
+                    >
+                      Enter 6-digit Code
+                    </label>
+                    <div className="relative">
+                      <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                      <input
+                        id="otp"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        value={otp}
+                        onChange={handleOtpChange}
+                        className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-center text-2xl font-mono tracking-[0.5em] text-slate-900 dark:text-white placeholder:tracking-normal placeholder:font-sans placeholder:text-base placeholder:text-slate-400"
+                        placeholder="• • • • • •"
+                        maxLength={6}
+                        required
+                        disabled={isSubmitting}
+                        autoFocus
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting || otp.length !== 6}
-                  className="w-full py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" /> Verifying...
-                    </>
-                  ) : (
-                    <>
-                      <LogIn className="w-5 h-5" /> Verify & Sign In
-                    </>
-                  )}
-                </button>
-
-                {/* Resend OTP & Change Number */}
-                <div className="flex items-center justify-between text-sm">
                   <button
-                    type="button"
-                    onClick={handleBackToPhone}
-                    className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
+                    type="submit"
+                    disabled={isSubmitting || otp.length !== 6}
+                    className="w-full py-3.5 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                   >
-                    ← Change number
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />{" "}
+                        Verifying...
+                      </>
+                    ) : (
+                      <>
+                        Verify & Sign In <LogIn className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleResendOTP}
-                    disabled={resendCooldown > 0 || isSubmitting}
-                    className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
-                  </button>
-                </div>
-              </form>
-            </FadeIn>
-          )}
 
-          <FadeIn delay={0.2}>
-            <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-              By continuing, you agree to our{" "}
-              <Link href="/terms" className="text-primary hover:underline">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link href="/privacy" className="text-primary hover:underline">
-                Privacy Policy
-              </Link>
+                  <div className="flex items-center justify-between text-sm pt-2">
+                    <button
+                      type="button"
+                      onClick={handleBackToPhone}
+                      className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                    >
+                      Change Number
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResendOTP}
+                      disabled={resendCooldown > 0 || isSubmitting}
+                      className="flex items-center gap-1.5 text-primary font-medium hover:text-primary/80 transition-colors disabled:text-slate-400 disabled:cursor-not-allowed"
+                    >
+                      <RefreshCw
+                        className={`w-3.5 h-3.5 ${isSubmitting ? "animate-spin" : ""}`}
+                      />
+                      {resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : "Resend OTP"}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
-          </FadeIn>
-        </div>
+          </div>
+        </FadeIn>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-slate-400 mt-8 relative z-10">
+          © {new Date().getFullYear()} SEBI Research Analyst. Secure Login.
+        </p>
       </div>
-    </main>
+    </div>
   );
 }
